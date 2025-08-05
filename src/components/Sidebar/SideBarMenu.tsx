@@ -34,7 +34,7 @@ const icons: NavIcon[] = [
  
 ];
 
-const SideBarMenu: React.FC<SideBarMenuProps> = ({ onLogoClick }) => {
+const SideBarMenu: React.FC<SideBarMenuProps> = () => {
   return (
     <div className="w-16 bg-[#F8F8FC] flex flex-col items-center">
       {/* Icon List */}

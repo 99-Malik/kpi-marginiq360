@@ -62,7 +62,7 @@ const NavBar: React.FC<NavBarProps> = ({ onLogoClick = () => { } }) => {
                             {/* Quote (md+) */}
                             <div className="hidden lg:flex items-center px-2 sm:px-3 h-7 rounded-sm border border-purple-200 bg-purple-100 shrink-0">
                                 <span className="text-primary text-[10px] sm:text-xs font-semibold whitespace-nowrap">
-                                    "Be a source of inspiration"
+                                    Be a source of inspiration
                                 </span>
                             </div>
 
