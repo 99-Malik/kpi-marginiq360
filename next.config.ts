@@ -1,40 +1,33 @@
 // next.config.ts
 import type { NextConfig } from "next";
 
-function excludeSvgFromAssetRules(config: any) {
-  const visit = (rule: any) => {
-    if (rule?.test?.test?.(".svg")) {
-      rule.exclude = Array.isArray(rule.exclude)
-        ? [...rule.exclude, /\.svg$/i]
-        : /\.svg$/i;
-    }
-    if (Array.isArray(rule?.oneOf)) rule.oneOf.forEach(visit);
-    if (Array.isArray(rule)) rule.forEach(visit);
-  };
-  visit(config.module.rules);
-}
-
 const nextConfig: NextConfig = {
   webpack(config) {
-    excludeSvgFromAssetRules(config);
+    // Remove `.svg` from Next's default asset loader
+    config.module.rules.forEach((rule: any) => {
+      if (rule.test?.test?.(".svg")) {
+        rule.exclude = /\.svg$/i;
+      }
+    });
 
+    // Add SVGR for files inside src/svgs
     config.module.rules.push({
       test: /\.svg$/i,
+      include: /src\/svgs/, // only process svgs from this folder
       issuer: /\.[jt]sx?$/,
       use: [
         {
           loader: "@svgr/webpack",
           options: {
             icon: true,
-            // make the icon use the CSS `color` value
             svgProps: { fill: "currentColor", stroke: "currentColor" },
+            titleProp: true,
             svgo: true,
             svgoConfig: {
+              multipass: true,
               plugins: [
-                // keep viewBox so sizing works
                 { name: "preset-default", params: { overrides: { removeViewBox: false } } },
-                // remove any hard-coded fills so currentColor can apply
-                { name: "removeAttrs", params: { attrs: "(fill)" } },
+                { name: "removeAttrs", params: { attrs: "(fill|stroke)" } },
               ],
             },
           },

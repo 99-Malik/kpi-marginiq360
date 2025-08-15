@@ -15,11 +15,13 @@ module.exports = {
         "primary-purple": "var(--primary-purple)",
         "primary-purple-hover": "var(--primary-purple-hover)",
         "input-ring": "var(--input-ring)",
+        primary: "#6366f1",
+        "primary-dark": "#4f46e5",
       },
       fontFamily: {
         sans: ["var(--font-plus-jakarta-sans)", ...fontFamily.sans],
       },
     },
   },
-  plugins: [],
+
 };

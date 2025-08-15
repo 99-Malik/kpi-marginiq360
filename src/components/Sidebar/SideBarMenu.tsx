@@ -1,68 +1,155 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
+import {
+  UserIcon,
+  HomeIcon,
+  MenuEngineeringIcon,
+  AnalyticsIcon,
+  DashboardIcon,
+  CartIcon,
+  CutlaryIcon,
+  ConeIcon,
+  ClipIcon,
+  TrashIcon,
+  StarIcon,
+  BillIcon,
+  CalculatorIcon,
+  BagIcon,
+  PersonIcon,
+  FolderIcon,
+  SettingsIcon
+} from '../SVGIcons/SideBarSvgIcons';
 
 interface SideBarMenuProps {
   onLogoClick?: () => void;
 }
 
-type NavIcon = {
+type PngIcon = {
+  type: 'png';
   src: string;
+  activeSrc: string;
   alt: string;
-  count?: number; // optional count
+  width: number;
+  height: number;
+  path?: string;
+  count?: number;
 };
 
+type SvgIcon = {
+  type: 'svg';
+  Icon: React.ComponentType<
+    React.SVGProps<SVGSVGElement> & { isActive?: boolean }
+  >;
+  alt: string;
+  width: number;
+  height: number;
+  path?: string;
+  count?: number;
+};
+
+type NavIcon = PngIcon | SvgIcon;
+
 const icons: NavIcon[] = [
-  { src: '/icons/user.png', alt: 'User' },
-  { src: '/icons/home.png', alt: 'Home', count: 5 }, // count example
-  { src: '/icons/dashboard.png', alt: 'dashboard' }, 
-  { src: '/icons/cart.png', alt: 'Cart' },
-  { src: '/icons/cutlary.png', alt: 'cutlary' },
-  { src: '/icons/menu-engineering.png', alt: 'menu-engineering' },
-  { src: '/icons/analytics.png', alt: 'analytics' },
-  { src: '/icons/performance.png', alt: 'performance' },
-  { src: '/icons/bill.png', alt: 'bill' },
-  { src: '/icons/bin.png', alt: 'bin' },
-  { src: '/icons/star.png', alt: 'Star' },
-  { src: '/icons/slip.png', alt: 'slip' },
-  { src: '/icons/calculator.png', alt: 'calculator' },
-  { src: '/icons/bag.png', alt: 'bag' },
-  { src: '/icons/human.png', alt: 'human' },
-  { src: '/icons/clip.png', alt: 'clip' },
-  { src: '/icons/settings.png', alt: 'settings' },
- 
+  { type: 'svg', Icon: UserIcon, alt: 'User', width: 40, height: 40, path: '/ai-suggestions' },
+  // { type: 'svg', Icon: HomeIcon, alt: 'Home', width: 24, height: 24, path: '/' },
+  { type: 'svg', Icon: DashboardIcon, alt: 'Dashboard', width: 24, height: 24, path: '/inventory-counts' },
+  { type: 'svg', Icon: CutlaryIcon, alt: 'Cutlary', width: 26, height: 26, path: '/recipe-management' },
+  { type: 'svg', Icon: MenuEngineeringIcon, alt: 'Menu Engineering', width: 40, height: 40, path: '/menu-engineering' },
+  { type: 'svg', Icon: AnalyticsIcon, alt: 'Analytics', width: 18, height: 18, path: '/analytics' },
+  { type: 'svg', Icon: ConeIcon, alt: 'Cone', width: 26, height: 26, path: '/cone' },
+  { type: 'svg', Icon: ClipIcon, alt: 'Clip', width: 26, height: 26, path: '/clip' },
+  { type: 'svg', Icon: TrashIcon, alt: 'Trash', width: 26, height: 26, path: '/trash' },
+  { type: 'svg', Icon: StarIcon, alt: 'Star', width: 26, height: 26, path: '/star' },
+  { type: 'svg', Icon: BillIcon, alt: 'Bill', width: 26, height: 26, path: '/bill' },
+  { type: 'svg', Icon: CalculatorIcon, alt: 'Calculator', width: 26, height: 26, path: '/calculator' },
+  { type: 'svg', Icon: BagIcon, alt: 'Bag', width: 26, height: 26, path: '/bag' },
+  { type: 'svg', Icon: CartIcon, alt: 'Cart', width: 26, height: 26, path: '/purchases' },
+
+  { type: 'svg', Icon: PersonIcon, alt: 'Person', width: 26, height: 26, path: '/person' },
+  { type: 'svg', Icon: FolderIcon, alt: 'Folder', width: 26, height: 26, path: '/folder' },
+  { type: 'svg', Icon: SettingsIcon, alt: 'Settings', width: 26, height: 26, path: '/settings' },
 ];
 
+const BTN_SIZE = 40; // Outer button size
+
 const SideBarMenu: React.FC<SideBarMenuProps> = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeIndex, setActiveIndex] = useState<number>(2);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentIndex = mounted
+    ? icons.findIndex((icon) => {
+        // Special handling for AI suggestions - match any path that starts with /ai-suggestions
+        if (icon.path === '/ai-suggestions') {
+          return pathname.startsWith('/ai-suggestions');
+        }
+        // For other icons, use exact path matching
+        return icon.path === pathname;
+      })
+    : -1;
+  const activeIdx = currentIndex !== -1 ? currentIndex : 2;
+
+  const handleClick = (idx: number, path?: string) => {
+    setActiveIndex(idx);
+    if (path) router.push(path);
+  };
+
+
   return (
-    <div className="w-16 bg-[#F8F8FC] flex flex-col items-center">
-      {/* Icon List */}
+    <div
+      className={`w-16 shrink-0 bg-[#F8F8FC] flex flex-col items-center
+      h-content min-h-0
+      ${pathname === '/ai-suggestions' ? 'overflow-y-auto scroll-hidden' : 'overflow-hidden'}
+    `}
+    >
       <div className="flex flex-col items-center space-y-4 flex-1 py-4">
         {icons.map((item, idx) => {
-          const isActive = idx === 2; // example active state
+          const isActive = idx === activeIdx;
+
           return (
             <button
-              key={`${item.src}-${idx}`}
-              className={`relative w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150
-                ${isActive ? 'bg-purple-200' : 'hover:bg-gray-100'}
+              key={`${item.alt}-${idx}`}
+              onClick={() => handleClick(idx, item.path)}
+              className={`relative grid place-items-center rounded-lg transition-all duration-150
+                ${isActive ? 'bg-[#F1E7F8]' : 'hover:bg-gray-100'}
               `}
+              style={{ width: BTN_SIZE, height: BTN_SIZE }}
               aria-label={item.alt}
             >
-              {/* Icon Image */}
-              <span className="relative w-5 h-5">
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  className="object-contain"
-                  sizes="20px"
-                  priority={idx < 4}
-                />
+              <span
+                className="relative grid place-items-center overflow-hidden"
+                style={{ width: item.width, height: item.height }}
+              >
+                {item.type === 'svg' ? (
+                  <item.Icon
+                    width={item.width}
+                    height={item.height}
+                    className="block w-full h-full"
+                    isActive={isActive}
+                    aria-hidden
+                  />
+                ) : (
+                  <span className="relative block w-full h-full">
+                    <Image
+                      src={isActive ? item.activeSrc : item.src}
+                      alt={item.alt}
+                      fill
+                      className="object-contain block"
+                      priority={idx < 4}
+                    />
+                  </span>
+                )}
               </span>
 
-              {/* Badge - Only for icons with `count` */}
-              {item.count !== undefined && item.count > 0 && (
+              {'count' in item && item.count && item.count > 0 && (
                 <span className="absolute -top-1 -right-2 bg-orange-500 text-white text-[10px] font-semibold px-1.5 py-1 rounded-full leading-none">
                   {item.count}
                 </span>
@@ -71,16 +158,6 @@ const SideBarMenu: React.FC<SideBarMenuProps> = () => {
           );
         })}
       </div>
-
-      {/* Settings (PNG) */}
-      <button
-        aria-label="Settings"
-        className="w-8 h-8 mb-4 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-all duration-150"
-      >
-        <span className="relative w-5 h-5">
-          <Image src="/icons/settings.png" alt="Settings" fill className="object-contain" />
-        </span>
-      </button>
     </div>
   );
 };

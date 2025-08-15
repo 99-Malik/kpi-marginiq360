@@ -4,15 +4,21 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftSection from './Sections/LeftSection';
 import Terms from './Sections/Terms';
+import { useSearchParams } from 'next/navigation';
 
 export default function IdentityVerification() {
     const router = useRouter();
     const [email, setEmail] = useState('');
+    const searchParams = useSearchParams();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
     };
+    const method = searchParams.get('method') || 'email'; // default to email
+    const [inputValue, setInputValue] = useState('');
 
+    const label = method === 'phone' ? 'Phone Number' : 'Email Address';
+    const placeholder = method === 'phone' ? 'Enter your phone number' : 'Enter your email';
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Navigate to OTP verification in SignIn folder structure
@@ -30,7 +36,7 @@ export default function IdentityVerification() {
 
             {/* Right Section - Identity Verification Form */}
             <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
-            <div className="w-[70%] max-w-md lg:mt-20 lg:mb-20">
+                <div className="w-[70%] max-w-md lg:mt-20 lg:mb-20">
                     {/* Back Button */}
 
                     {/* Logo and Brand */}
@@ -51,18 +57,19 @@ export default function IdentityVerification() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Email Address */}
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-[#727A90] mb-2">
-                                Email Address
+                            <label htmlFor="identity" className="block text-sm font-medium text-[#727A90] mb-2">
+                                {label}
                             </label>
                             <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={email}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-input-ring rounded-xl focus:outline-none focus:ring-1 focus:ring-input-ring focus:border-input-ring transition-colors text-[#24282E] text-[12px] placeholder:text-[12px] placeholder:text-[#A0A0A0]"
-                                placeholder="Enter your email"
-                            />
+                                type={method === 'phone' ? 'tel' : 'email'}
+                                id="identity"
+                                name="identity"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                placeholder={placeholder}
+                                className="w-full px-4 py-2 border border-input-ring rounded-xl focus:outline-none focus:ring-1 focus:ring-input-ring focus:border-input-ring transition-colors pr-12 text-[#24282E] text-[12px] placeholder:text-[12px] placeholder:text-[#A0A0A0]"
+                                />
+
                         </div>
 
                         {/* Send OTP Button */}

@@ -7,6 +7,11 @@
   --primary-purple-hover: #5a0894;
   --input-ring: #E9EAEA;
   --font-plus-jakarta-sans: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+
+  /* Scrollbar colors */
+  --primary: #f1f1f1; /* track */
+  --secondary: rgba(31, 209, 253, 0.4); /* thumb */
+  --tertiary: rgba(31, 209, 253, 0.6); /* thumb hover */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,3 +65,70 @@ img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
 }
+
+/* ========= Notification Scrollbar Styles ========= */
+
+.custom-scroll::-webkit-scrollbar {
+  width: 4px; /* Thin scrollbar */
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #f8f9fa; /* Track color */
+  border-radius: px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #7D38DC;
+  border-radius: 0 0 4px 4px;
+
+  /* Make thumb visually shorter */
+  border-top: 0px solid transparent; /* space at top */
+  border-bottom:5px solid transparent; /* space at bottom */
+  background-clip: padding-box;
+
+  /* Keeps it narrow */
+  min-height: 20px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6B21A8;
+  background-clip: padding-box;
+}
+
+
+.custom-Horizontalscroll::-webkit-scrollbar {
+  height: 4px; /* Thin horizontal scrollbar height */
+}
+
+.custom-Horizontalscroll::-webkit-scrollbar-track {
+  background: #f8f9fa; /* Track color */
+  border-radius: 4px;
+}
+
+.custom-Horizontalscroll::-webkit-scrollbar-thumb {
+  background: #7D38DC;
+  border-radius: 4px;
+
+  /* Keeps it short visually if needed */
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  background-clip: padding-box;
+
+  min-width: 20px; /* min thumb length */
+}
+
+.custom-Horizontalscroll::-webkit-scrollbar-thumb:hover {
+  background: #6B21A8;
+  background-clip: padding-box;
+}
+
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.scroll-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+
