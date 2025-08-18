@@ -1,17 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import ProductDropDown from '../../DropDown/ProductDropDown';
-import { Calendar } from "@heroui/calendar";
 import { format } from "date-fns";
 import { DatePicker } from './Calendar/DatePicker';
 
 interface AddInventoryModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAddCount?: (newItem: any) => void; // Add callback prop
+    onAddCount?: (newItem: {
+        id: string;
+        product: string;
+        category: string;
+        expected: string;
+        actual: string;
+        price: string;
+        date: string;
+    }) => void; // Add callback prop
 }
 
 const AddInventoryModal = ({ isOpen, onClose, onAddCount }: AddInventoryModalProps) => {
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedDate] = useState<Date | undefined>(new Date());
     const [formData, setFormData] = useState({
         product: '',
         expectedQuantity: '',

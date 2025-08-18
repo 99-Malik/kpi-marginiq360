@@ -9,7 +9,6 @@ import StatusPills from '../../components/StatusPills/StatusPills';
 
 function MenuEngineering() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [selectedRows, setSelectedRows] = useState<string[]>([]);
     const [activeMainTab, setActiveMainTab] = useState('profitability-matrix');
     const [activeSubTab, setActiveSubTab] = useState('menu-items');
 

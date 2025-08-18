@@ -7,7 +7,15 @@ import MenuBar from '../../components/MenuBar/MenuBar';
 import ChartCard from '../../components/LineChartCard/ChartCards';
 import RowsPerPageSelect from '../../components/DropDown/RowsPerPageSelect';
 import InventoryModal from '../../components/Modal/InventoryCounts/AddInventoryModal';
-
+type InventoryRow = {
+  id: string;
+  product: string;
+  category: string;
+  expected: string;
+  actual: string;
+  price: string;
+  date: string;
+};
 
 function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,7 +77,7 @@ function Page() {
   }
 
   // Generate fake product inventory data (for Product Inventory tab)
-  const [productInventoryData, setProductInventoryData] = useState(Array.from({ length: 30 }, (_, i) => ({
+  const [productInventoryData] = useState(Array.from({ length: 30 }, (_, i) => ({
     id: `30${2000 + i}`,
     product: `Product ${i + 1}`,
     category: ['Meal', 'Beverages', 'Bakery', 'Food'][i % 4],
@@ -112,7 +120,7 @@ function Page() {
     }
   };
 
-  const handleAddInventoryCount = (newItem: any) => {
+  const handleAddInventoryCount = (newItem: InventoryRow) => {
     // Only add to inventory count data if we're on the inventory count tab
     if (activeTab === 'inventory-count') {
       setInventoryCountData(prev => [...prev, newItem]);
