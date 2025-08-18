@@ -3,13 +3,21 @@ import ProductDropDown from '../../DropDown/ProductDropDown';
 import { Calendar } from "@heroui/calendar";
 import { format } from "date-fns";
 import { DatePicker } from './Calendar/DatePicker';
+
 interface AddInventoryModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onAddCount?: (newItem: any) => void; // Add callback prop
 }
 
-const AddInventoryModal = ({ isOpen, onClose }: AddInventoryModalProps) => {
+const AddInventoryModal = ({ isOpen, onClose, onAddCount }: AddInventoryModalProps) => {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [formData, setFormData] = useState({
+        product: '',
+        expectedQuantity: '',
+        actualQuantity: '',
+        date: new Date()
+    });
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -24,6 +32,23 @@ const AddInventoryModal = ({ isOpen, onClose }: AddInventoryModalProps) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [onClose]);
+
+    const handleSubmit = () => {
+        if (onAddCount) {
+            const newItem = {
+                id: `30${2000 + Math.floor(Math.random() * 1000)}`,
+                product: formData.product || 'New Product',
+                category: 'Food',
+                expected: `${formData.expectedQuantity || '25'} (Units)`,
+                actual: `${formData.actualQuantity || '30'} (Units)`,
+                price: `$${(100 + Math.floor(Math.random() * 50)).toFixed(2)}`,
+                date: format(selectedDate || new Date(), 'dd MMM yyyy'),
+            };
+            onAddCount(newItem);
+        }
+        onClose();
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -56,7 +81,13 @@ const AddInventoryModal = ({ isOpen, onClose }: AddInventoryModalProps) => {
                 <div className="space-y-4">
                     <div>
                         <label className="text-sm text-gray-500">Product</label>
-                        <ProductDropDown    options={['Chicken', 'Beef', 'Fish', 'Eggs']}   onChange={(v) => console.log(v)}/>
+                        <input
+                            type="text"
+                            value={formData.product}
+                            onChange={(e) => setFormData({...formData, product: e.target.value})}
+                            placeholder="Enter product name"
+                            className="mt-1 w-full border border-gray-200 rounded-md h-10 px-3 text-xs"
+                        />
                     </div>
 
                     <div className="flex gap-4">
@@ -64,7 +95,9 @@ const AddInventoryModal = ({ isOpen, onClose }: AddInventoryModalProps) => {
                             <label className="text-sm text-gray-500">Expected Quantity (kg)</label>
                             <input
                                 type="text"
-                                defaultValue="25"
+                                value={formData.expectedQuantity}
+                                onChange={(e) => setFormData({...formData, expectedQuantity: e.target.value})}
+                                placeholder="25"
                                 className="mt-1 w-full border border-gray-200 rounded-md h-10 px-3 text-xs"
                             />
                         </div>
@@ -72,7 +105,9 @@ const AddInventoryModal = ({ isOpen, onClose }: AddInventoryModalProps) => {
                             <label className="text-sm text-gray-500">Actually Quantity (kg)</label>
                             <input
                                 type="text"
-                                defaultValue="30 kg"
+                                value={formData.actualQuantity}
+                                onChange={(e) => setFormData({...formData, actualQuantity: e.target.value})}
+                                placeholder="30"
                                 className="mt-1 w-full border border-gray-200 rounded-md h-10 px-3 text-xs"
                             />
                         </div>
@@ -110,7 +145,10 @@ const AddInventoryModal = ({ isOpen, onClose }: AddInventoryModalProps) => {
 
                         Cancel
                     </button>
-                    <button className="px-4 py-2 text-xs bg-primary text-white rounded-lg flex items-center gap-2">
+                    <button 
+                        onClick={handleSubmit}
+                        className="px-4 py-2 text-xs bg-primary text-white rounded-lg flex items-center gap-2"
+                    >
                         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#clip0_2955_18249)">
                                 <path d="M14.8784 2.95401L5.66577 12.166C5.60383 12.2282 5.53022 12.2775 5.44917 12.3112C5.36811 12.3449 5.28121 12.3622 5.19344 12.3622C5.10567 12.3622 5.01876 12.3449 4.93771 12.3112C4.85665 12.2775 4.78304 12.2282 4.7211 12.166L1.15844 8.60001C1.0965 8.53782 1.02289 8.48848 0.941834 8.45481C0.860779 8.42114 0.773874 8.40381 0.686104 8.40381C0.598335 8.40381 0.51143 8.42114 0.430375 8.45481C0.34932 8.48848 0.275711 8.53782 0.213771 8.60001C0.151586 8.66194 0.102245 8.73555 0.068577 8.81661C0.0349092 8.89767 0.0175781 8.98457 0.0175781 9.07234C0.0175781 9.16011 0.0349092 9.24701 0.068577 9.32807C0.102245 9.40912 0.151586 9.48273 0.213771 9.54467L3.77777 13.108C4.15374 13.4833 4.66324 13.694 5.19444 13.694C5.72564 13.694 6.23514 13.4833 6.6111 13.108L15.8231 3.89801C15.8852 3.83608 15.9344 3.76251 15.9681 3.68152C16.0017 3.60052 16.019 3.5137 16.019 3.42601C16.019 3.33832 16.0017 3.25149 15.9681 3.17049C15.9344 3.0895 15.8852 3.01593 15.8231 2.95401C15.7612 2.89182 15.6876 2.84248 15.6065 2.80881C15.5254 2.77514 15.4385 2.75781 15.3508 2.75781C15.263 2.75781 15.1761 2.77514 15.095 2.80881C15.014 2.84248 14.9404 2.89182 14.8784 2.95401Z" fill="white" />

@@ -5,7 +5,6 @@ import NavBar from '../../components/NavBar/NavBar';
 import SideBarMenu from '../../components/Sidebar/SideBarMenu';
 import MenuBar from '../../components/MenuBar/MenuBar';
 import ChartCard from '../../components/LineChartCard/ChartCards';
-import { FaBox, FaBarcode, FaTimesCircle } from 'react-icons/fa';
 import RowsPerPageSelect from '../../components/DropDown/RowsPerPageSelect';
 import InventoryModal from '../../components/Modal/InventoryCounts/AddInventoryModal';
 
@@ -16,10 +15,38 @@ function Page() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('product-inventory'); // Add state for active tab
 
   const handleLogoClick = () => {
     setMenuOpen(!menuOpen);
   };
+
+  // Tab switcher component
+  const TabSwitcher = () => (
+    <div className="flex space-x-8 mb-6">
+      <button
+        onClick={() => setActiveTab('product-inventory')}
+        className={`pb-2 text-sm font-medium transition-colors duration-200 ${
+          activeTab === 'product-inventory'
+            ? 'text-primary border-b-2 border-primary'
+            : 'text-gray-500 hover:text-gray-700'
+        }`}
+      >
+        Product Inventory
+      </button>
+      <button
+        onClick={() => setActiveTab('inventory-count')}
+        className={`pb-2 text-sm font-medium transition-colors duration-200 ${
+          activeTab === 'inventory-count'
+            ? 'text-primary border-b-2 border-primary'
+            : 'text-gray-500 hover:text-gray-700'
+        }`}
+      >
+        Inventory Count
+      </button>
+    </div>
+  );
+
   const chartData = {
     totalProducts: [
       { value: 200, name: 'Jan' },
@@ -41,8 +68,8 @@ function Page() {
     ],
   }
 
-  // Generate fake inventory data
-  const inventoryData = Array.from({ length: 30 }, (_, i) => ({
+  // Generate fake product inventory data (for Product Inventory tab)
+  const [productInventoryData, setProductInventoryData] = useState(Array.from({ length: 30 }, (_, i) => ({
     id: `30${2000 + i}`,
     product: `Product ${i + 1}`,
     category: ['Meal', 'Beverages', 'Bakery', 'Food'][i % 4],
@@ -50,14 +77,27 @@ function Page() {
     actual: `${12 + i} (Units)`,
     price: `$${(100 + i * 5).toFixed(2)}`,
     date: `0${(i % 9) + 1} Dec 2022`,
-  }));
+  })));
 
-  const totalPages = Math.ceil(inventoryData.length / rowsPerPage);
-  const paginatedData = inventoryData.slice(
+  // Generate fake inventory count data (for Inventory Count tab)
+  const [inventoryCountData, setInventoryCountData] = useState(Array.from({ length: 0 }, (_, i) => ({
+    id: `30${2000 + i}`,
+    product: `Product ${i + 1}`,
+    category: ['Meal', 'Beverages', 'Bakery', 'Food'][i % 4],
+    expected: `${10 + i} (Units)`,
+    actual: `${12 + i} (Units)`,
+    price: `$${(100 + i * 5).toFixed(2)}`,
+    date: `0${(i % 9) + 1} Dec 2022`,
+  })));
+
+  // Get the appropriate data based on active tab
+  const currentData = activeTab === 'product-inventory' ? productInventoryData : inventoryCountData;
+  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+  const paginatedData = currentData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-
+  const isEmptyView = activeTab === 'inventory-count' && inventoryCountData.length === 0;
   const toggleRow = (id: string) => {
     setSelectedRows(prev =>
       prev.includes(id) ? prev.filter(row => row !== id) : [...prev, id]
@@ -69,6 +109,13 @@ function Page() {
       setSelectedRows([]);
     } else {
       setSelectedRows(paginatedData.map(row => row.id));
+    }
+  };
+
+  const handleAddInventoryCount = (newItem: any) => {
+    // Only add to inventory count data if we're on the inventory count tab
+    if (activeTab === 'inventory-count') {
+      setInventoryCountData(prev => [...prev, newItem]);
     }
   };
 
@@ -98,13 +145,11 @@ function Page() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {inventoryData.length > 0
-                  ? 'Manage Inventory'
-                  : 'Inventory Counts'}
+                {activeTab === 'product-inventory' ? 'Manage Inventory' : 'Inventory Counts'}
               </h1>
               <p className="text-gray-500">Track and manage inventory counts</p>
             </div>
-            {inventoryData.length > 0 && (
+          
               <button
                 type="button"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#E4E7EC] bg-white text-[#727A90] text-sm font-medium"
@@ -134,8 +179,11 @@ function Page() {
                 </svg>
                 <span>Last Week</span>
               </button>
-            )}
+            
           </div>
+
+          {/* Tab Switcher */}
+          <TabSwitcher />
 
           {/* Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -145,6 +193,7 @@ function Page() {
               change="+10%"
               amount="$200"
               color="green"
+              showChart
               chartData={chartData.totalProducts}
               icon={
                 <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -173,6 +222,7 @@ function Page() {
               change="+20%"
               amount="+$750"
               color="yellow"
+              showChart
               chartData={chartData.inventorySKUs}
               icon={<svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="0.333008" width="44" height="44" rx="22" fill="#FDF7E7"/>
@@ -198,6 +248,7 @@ function Page() {
               change="-10%"
               amount="-$1500"
               color="red"
+              showChart
               chartData={chartData.soldOut}
               icon={<svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="0.666992" width="44" height="44" rx="22" fill="#FCE8E8"/>
@@ -293,7 +344,7 @@ function Page() {
                       setCurrentPage(1);
                     }}
                   />
-
+    {isEmptyView && (
                   <button
                     onClick={() => setIsModalOpen(true)}
                     className="bg-primary text-white px-3 py-2 rounded-lg text-sm flex items-center gap-1">
@@ -318,14 +369,22 @@ function Page() {
                     </svg>
                     Add Count
                   </button>
-                  <InventoryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                    )}
+                  <InventoryModal 
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onAddCount={handleAddInventoryCount}
+                  />
+                  
                 </>
+                
               </div>
+              
             </div>
 
             {/* Table Content */}
             <div className="bg-white  shadow overflow-x-auto custom-Horizontalscroll">
-              {inventoryData.length === 0 ? (
+              {isEmptyView ? (
                 <div className="flex flex-col items-center justify-center h-[500px] text-center">
                   <div className="w-20 h-20 rounded-full bg-[#F1E7F8] flex items-center justify-center">
                     <svg width="80" height="81" viewBox="0 0 80 81" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -372,7 +431,7 @@ function Page() {
                       </th>
 
                       {/* Column Headers */}
-                      {['ID', 'Product', 'Category', 'Expected Qty', 'Actual Quantity', 'Price', 'Added'].map((header) => (
+                      {['ID', 'Product', 'Category', 'Expected Qty', 'Actual Quantity', 'Cost', 'Added'].map((header) => (
                         <th key={header} className="px-4 py-4">
                           {header === 'ID' ? (
                             // ID without dropdown icon
@@ -486,8 +545,8 @@ function Page() {
               {/* Left text */}
               <span>
                 Showing {(currentPage - 1) * rowsPerPage + 1}–
-                {Math.min(currentPage * rowsPerPage, inventoryData.length)} from{" "}
-                {inventoryData.length}
+                {Math.min(currentPage * rowsPerPage, currentData.length)} from{" "}
+                {currentData.length}
               </span>
 
               {/* Pagination controls */}
