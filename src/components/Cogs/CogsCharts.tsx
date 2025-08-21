@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     ResponsiveContainer,
     BarChart,
@@ -12,6 +12,7 @@ import {
     PieChart,
     Pie,
     Cell,
+    Rectangle,
 } from 'recharts';
 
 /* ---------- COLORS ---------- */
@@ -32,7 +33,7 @@ const SALES_BY_ITEMS = [
     { name: 'Burger', teal: 260, violet: 540, orange: 200, highlight: true },
     { name: 'Platter', teal: 820, violet: 420, orange: 480 },
     { name: 'Sandwich', teal: 600, violet: 260, orange: 420 },
-    { name: 'Pizza', teal: 960, violet: 300, orange: 260 },
+    { name: 'Pizza Special', teal: 960, violet: 300, orange: 260 },
 ];
 
 const DONUT = [
@@ -41,11 +42,6 @@ const DONUT = [
     { name: 'Recipies', value: 25, color: COLORS.violet },
     { name: 'Label', value: 15, color: COLORS.amber },
 ];
-
-/* ---------- TYPES ---------- */
-interface MouseMoveEvent {
-    activeTooltipIndex?: number | string | null;
-}
 
 /* ---------- SHARED UI ---------- */
 function Card({
@@ -81,9 +77,33 @@ Card.displayName = 'Card';
 export default function TopRow() {
     const [activeIdx, setActiveIdx] = useState<number | null>(null);
 
+    // Validate chart data to prevent crashes
+    const validSalesData = useMemo(() => {
+        if (!SALES_BY_ITEMS || !Array.isArray(SALES_BY_ITEMS)) return [];
+        return SALES_BY_ITEMS.filter(item => 
+            item && 
+            typeof item === 'object' && 
+            typeof item.name === 'string' &&
+            typeof item.teal === 'number' &&
+            typeof item.violet === 'number' &&
+            typeof item.orange === 'number'
+        );
+    }, []);
+
+    const validDonutData = useMemo(() => {
+        if (!DONUT || !Array.isArray(DONUT)) return [];
+        return DONUT.filter(item => 
+            item && 
+            typeof item === 'object' && 
+            typeof item.name === 'string' &&
+            typeof item.value === 'number' &&
+            typeof item.color === 'string'
+        );
+    }, []);
+
     // Height fits rows so there's almost no bottom gap; capped with a sensible minimum.
     const rowHeight = 32; // reduced from 42 to make bars less thick
-    const chartHeight = Math.max(400, SALES_BY_ITEMS.length * rowHeight); // reduced from 280 to 260
+    const chartHeight = Math.max(400, (validSalesData?.length || 0) * rowHeight); // reduced from 280 to 260
 
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -112,58 +132,79 @@ export default function TopRow() {
                     {/* Body: no bottom padding; chart fits height */}
                     <div className="px-4 md:px-6 pt-4 pb-0 h-full">
                         <div className="relative overflow-hidden" style={{ height: chartHeight }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart
-                                    layout="vertical"
-                                    data={SALES_BY_ITEMS}
-                                    barCategoryGap={28}  // increase gap between bars
-                                    barSize={8}         // reduce bar thickness                        // reduced from 16 to 12 for thicker bars
-                                    margin={{ top: 12, right: 24, bottom: 8, left: 56 }} // added 8px bottom margin instead of 0
-                                    onMouseMove={(s: MouseMoveEvent) => setActiveIdx(typeof s?.activeTooltipIndex === 'number' ? s.activeTooltipIndex : null)}
-                                    onMouseLeave={() => setActiveIdx(null)}
-                                >
-                                    <CartesianGrid horizontal={false} strokeDasharray="3 6" stroke={COLORS.grid} />
-                                    <XAxis
-                                        type="number"
-                                        tick={{ fill: COLORS.axis, fontSize: 12 }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                        tickFormatter={(v) => (v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`)}
-                                    />
-                                    <YAxis
-                                        type="category"
-                                        dataKey="name"
-                                        axisLine={false}
-                                        tickLine={false}
-                                        width={64}
-                                        tickMargin={4}
-                                        tick={({ x, y, payload }: { x: number; y: number; payload: { index: number; value: string } }) => {
-                                            const isHighlighted = payload.index === activeIdx || SALES_BY_ITEMS[payload.index]?.highlight;
-                                            return (
-                                                <g transform={`translate(${x},${y})`}>
-                                                    <text
-                                                        x={0}
-                                                        y={0}
-                                                        dy={4}
-                                                        textAnchor="end"
-                                                        className={isHighlighted ? 'font-semibold' : ''}
-                                                        fill={isHighlighted ? COLORS.violet : COLORS.axis}
-                                                        style={{ fontSize: 12 }}
-                                                    >
-                                                        {payload.value}
-                                                    </text>
-                                                </g>
-                                            );
-                                        }}
-                                    />
-                                    <Tooltip
-                                        content={<BarsTooltip />}
-                                    />
-                                    <Bar dataKey="teal" stackId="x" fill={COLORS.teal} radius={[10, 10, 10, 10]} />
-                                    <Bar dataKey="violet" stackId="x" fill={COLORS.violet} radius={[10, 10, 10, 10]} />
-                                    <Bar dataKey="orange" stackId="x" fill={COLORS.orange} radius={[10, 10, 10, 10]} />
-                                </BarChart>
-                            </ResponsiveContainer>
+                            {validSalesData && validSalesData.length > 0 ? (
+                                <div className="w-full h-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart
+                                            layout="vertical"
+                                            data={validSalesData}
+                                            barCategoryGap={28}
+                                            barSize={8}
+                                            margin={{ top: 12, right: 24, bottom: 8, left: 56 }}
+                                            onMouseMove={(nextState: any) => {
+                                                if (nextState && typeof nextState.activeTooltipIndex === 'number') {
+                                                    setActiveIdx(nextState.activeTooltipIndex);
+                                                }
+                                            }}
+                                            onMouseLeave={() => setActiveIdx(null)}
+                                        >
+                                            <CartesianGrid horizontal={false} strokeDasharray="3 6" stroke={COLORS.grid} />
+                                            <XAxis
+                                                type="number"
+                                                tick={{ fill: COLORS.axis, fontSize: 12 }}
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tickFormatter={(v) => (v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`)}
+                                            />
+                                            <YAxis
+                                                type="category"
+                                                dataKey="name"
+                                                axisLine={false}
+                                                tickLine={false}
+                                                width={64}
+                                                tickMargin={4}
+                                                tick={({ x, y, payload }: { x: number; y: number; payload: { index: number; value: string } }) => {
+                                                    if (!payload || typeof payload.index !== 'number') {
+                                                        return (
+                                                            <g transform={`translate(${x},${y})`}>
+                                                                <text x={0} y={0} dy={4} textAnchor="end" fill={COLORS.axis} style={{ fontSize: 12 }}>
+                                                                    {payload?.value || ''}
+                                                                </text>
+                                                            </g>
+                                                        );
+                                                    }
+                                                    const isHighlighted = payload.index === activeIdx || validSalesData[payload.index]?.highlight;
+                                                    return (
+                                                        <g transform={`translate(${x},${y})`}>
+                                                            <text
+                                                                x={0}
+                                                                y={0}
+                                                                dy={4}
+                                                                textAnchor="end"
+                                                                className={isHighlighted ? 'font-semibold' : ''}
+                                                                fill={isHighlighted ? COLORS.violet : COLORS.axis}
+                                                                style={{ fontSize: 12 }}
+                                                            >
+                                                                {payload.value}
+                                                            </text>
+                                                        </g>
+                                                    );
+                                                }}
+                                            />
+                                            <Tooltip
+                                                content={<BarsTooltip />}
+                                            />
+                                            <Bar key="teal" dataKey="teal" stackId="x" fill={COLORS.teal} radius={[10, 10, 10, 10]} />
+                                            <Bar key="violet" dataKey="violet" stackId="x" fill={COLORS.violet} radius={[10, 10, 10, 10]} />
+                                            <Bar key="orange" dataKey="orange" stackId="x" fill={COLORS.orange} radius={[10, 10, 10, 10]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-full text-gray-500">
+                                    No data available
+                                </div>
+                            )}
                         </div>
                     </div>
                 </Card>
@@ -186,10 +227,11 @@ export default function TopRow() {
                 >
                     <div className="p-5 flex flex-col h-full">
                         <div className="mx-auto relative w-[240px] h-[240px] md:w-[260px] md:h-[260px]">
+                            {validDonutData && validDonutData.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
-                                        data={DONUT}
+                                        data={validDonutData}
                                         dataKey="value"
                                         innerRadius={86}   //  closer to outer, makes ring thinner
                                         outerRadius={92}   //  keep same, so thickness = 6px
@@ -199,10 +241,11 @@ export default function TopRow() {
                                         cornerRadius={4}   //  slightly rounded, not too chunky
                                         strokeWidth={0}
                                     >
-                                        {DONUT.map((e, i) => <Cell key={i} fill={e.color} />)}
+                                        {validDonutData.map((e, i) => <Cell key={`${e.name}-${i}`} fill={e.color} />)}
                                     </Pie>
                                 </PieChart>
                             </ResponsiveContainer>
+                            ) : null}
                             <div className="absolute inset-0 grid place-items-center pointer-events-none">
                                 <div className="text-center">
                                     <div className="text-3xl font-bold text-gray-900">$7,500</div>
@@ -216,8 +259,8 @@ export default function TopRow() {
 
                         {/* Legend */}
                         <div className="mt-4 space-y-2">
-                            {DONUT.map((l) => (
-                                <div key={l.name} className="flex items-center justify-between text-sm">
+                            {validDonutData && validDonutData.length > 0 && validDonutData.map((l, index) => (
+                                <div key={`${l.name}-${index}`} className="flex items-center justify-between text-sm">
                                     <div className="flex items-center gap-2">
                                         <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: l.color }} />
                                         <span className="text-gray-700">{l.name}</span>
@@ -235,19 +278,19 @@ export default function TopRow() {
 
 /* ---------- BarsTooltip (same as you had) ---------- */
 function BarsTooltip({ active, payload }: { active?: boolean; payload?: Array<{ color?: string; fill?: string; name?: string; dataKey?: string; value: number }> }) {
-    if (!active || !payload?.length) return null;
+    if (!active || !payload || !Array.isArray(payload) || payload.length === 0) return null;
     const rows = payload
-        .filter((p) => p.value > 0)
+        .filter((p) => p && typeof p.value === 'number' && p.value > 0)
         .map((p) => ({
             color: p.color || p.fill,
-            label: p.name || p.dataKey,
+            label: p.name || p.dataKey || 'Unknown',
             value: p.value,
         }));
     return (
         <div className="rounded-xl bg-white  ring-1 ring-gray-200 px-3 py-2 text-xs">
             <div className="space-y-1">
                 {rows.map((r, i: number) => (
-                    <div key={i} className="flex items-center gap-2">
+                    <div key={`${r.label}-${i}`} className="flex items-center gap-2">
                         <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: r.color }} />
                         <span className="text-gray-600">{r.label}:</span>
                         <span className="font-semibold text-gray-900">${r.value}</span>
