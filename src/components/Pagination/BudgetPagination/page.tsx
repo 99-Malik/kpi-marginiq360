@@ -2,288 +2,179 @@
 
 import React, { useState } from 'react';
 import RowsPerPageSelect from '../../DropDown/RowsPerPageSelect';
-import StatusPills from '../../StatusPills/StatusPills';
+import BudgetStatusPills, { BudgetStatus } from '../../StatusPills/BudgetStatusPills/page';
 
-function Pagination() {
+// Define the data type with proper typing
+interface InventoryItem {
+    id: string;
+    category: string;
+    actual: string;
+    difference: string;
+    variance: string;
+    status: BudgetStatus;
+}
+
+interface PaginationProps {
+    onEditBudget?: (data: InventoryItem) => void;
+}
+
+function Pagination({ onEditBudget }: PaginationProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     
-    // Updated data structure to match the image with more rows
-    const inventoryData = [
+    // Updated data structure to match the image
+    const inventoryData: InventoryItem[] = [
         {
             id: '1',
-            product: 'Spicy Chicken Sandwich',
-            category: 'Appetizers',
-            price: '$45',
-            margin: '65%',
-            popularity: '85%',
-            sales: '500',
-            revenue: '$8,560.2',
-            status: 'Star'
+            category: 'Food Cost',
+            actual: '$60,000',
+            difference: '+$20,000',
+            variance: '+2%',
+            status: 'Under Budget'
         },
         {
             id: '2',
-            product: 'Veggie Wrap',
-            category: 'Salads',
-            price: '$32',
-            margin: '80%',
-            popularity: '85%',
-            sales: '600',
-            revenue: '$6,890.75',
-            status: 'Star'
+            category: 'Dining Out Costs',
+            actual: '$63,000',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '3',
-            product: 'Caesar Salad',
-            category: 'Soups',
-            price: '$85',
-            margin: '90%',
-            popularity: '85%',
-            sales: '750',
-            revenue: '$9,432.0',
-            status: 'Plow Horses'
+            category: 'Meal Delivery Services',
+            actual: '$47,125',
+            difference: '+$20,000',
+            variance: '+2%',
+            status: 'Under Budget'
         },
         {
             id: '4',
-            product: 'Fish Tacos',
-            category: 'Pasta',
-            price: '$90',
-            margin: '75%',
-            popularity: '85%',
-            sales: '800',
-            revenue: '$5,678.9',
-            status: 'Puzzles'
+            category: 'Organic Food Premiums',
+            actual: '$55,600',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '5',
-            product: 'Mushroom Risotto',
-            category: 'Seafood',
-            price: '$74',
-            margin: '70%',
-            popularity: '85%',
-            sales: '900',
-            revenue: '$10,123.4',
-            status: 'Star'
+            category: 'Meal Prep Supplies',
+            actual: '$42,900',
+            difference: '+$20,000',
+            variance: '+2%',
+            status: 'Under Budget'
         },
         {
             id: '6',
-            product: 'Quinoa Bowl',
-            category: 'Meat Dishes',
-            price: '$50',
-            margin: '85%',
-            popularity: '85%',
-            sales: '1200',
-            revenue: '$4,567.3',
-            status: 'Plow Horses'
+            category: 'Snacks and Treats',
+            actual: '$52,300',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '7',
-            product: 'Stuffed Bell Peppers',
-            category: 'Vegetarian...',
-            price: '$29',
-            margin: '60%',
-            popularity: '85%',
-            sales: '1500',
-            revenue: '$11,256.8',
-            status: 'Star'
+            category: 'Beverage Purchases',
+            actual: '$36,400',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '8',
-            product: 'Beef Stir-Fry',
-            category: 'Desserts',
-            price: '$99',
-            margin: '95%',
-            popularity: '85%',
-            sales: '450',
-            revenue: '$3,450.1',
-            status: 'Puzzles'
+            category: 'Grocery Expenses',
+            actual: '$53,700',
+            difference: '+$20,000',
+            variance: '+2%',
+            status: 'Under Budget'
         },
         {
             id: '9',
-            product: 'Pasta Primavera',
-            category: 'Beverages',
-            price: '$58',
-            margin: '50%',
-            popularity: '85%',
-            sales: '1800',
-            revenue: '$12,789.6',
-            status: 'Plow Horses'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '10',
-            product: 'Grilled Salmon',
-            category: 'Seafood',
-            price: '$120',
-            margin: '88%',
-            popularity: '92%',
-            sales: '650',
-            revenue: '$15,234.5',
-            status: 'Star'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '11',
-            product: 'Chicken Alfredo',
-            category: 'Pasta',
-            price: '$68',
-            margin: '72%',
-            popularity: '78%',
-            sales: '1100',
-            revenue: '$7,890.1',
-            status: 'Plow Horses'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '12',
-            product: 'Greek Salad',
-            category: 'Salads',
-            price: '$42',
-            margin: '82%',
-            popularity: '88%',
-            sales: '850',
-            revenue: '$6,234.7',
-            status: 'Star'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '13',
-            product: 'Beef Burger',
-            category: 'Meat Dishes',
-            price: '$55',
-            margin: '68%',
-            popularity: '95%',
-            sales: '2000',
-            revenue: '$18,456.2',
-            status: 'Star'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '14',
-            product: 'Vegetable Curry',
-            category: 'Vegetarian...',
-            price: '$38',
-            margin: '75%',
-            popularity: '82%',
-            sales: '720',
-            revenue: '$4,567.8',
-            status: 'Puzzles'
-        },
-        {
-            id: '15',
-            product: 'Shrimp Scampi',
-            category: 'Seafood',
-            price: '$95',
-            margin: '85%',
-            popularity: '89%',
-            sales: '580',
-            revenue: '$8,234.9',
-            status: 'Star'
-        },
-        {
-            id: '16',
-            product: 'Margherita Pizza',
-            category: 'Appetizers',
-            price: '$48',
-            margin: '70%',
-            popularity: '91%',
-            sales: '1600',
-            revenue: '$12,345.6',
-            status: 'Star'
-        },
-        {
-            id: '17',
-            product: 'Lentil Soup',
-            category: 'Soups',
-            price: '$28',
-            margin: '78%',
-            popularity: '76%',
-            sales: '420',
-            revenue: '$2,345.1',
-            status: 'Plow Horses'
-        },
-        {
-            id: '18',
-            product: 'Chocolate Cake',
-            category: 'Desserts',
-            price: '$35',
-            margin: '82%',
-            popularity: '94%',
-            sales: '950',
-            revenue: '$5,678.3',
-            status: 'Star'
-        },
-        {
-            id: '19',
-            product: 'Iced Coffee',
-            category: 'Beverages',
-            price: '$18',
-            margin: '65%',
-            popularity: '87%',
-            sales: '2200',
-            revenue: '$6,789.4',
-            status: 'Plow Horses'
-        },
-        {
-            id: '20',
-            product: 'Garlic Bread',
-            category: 'Bakery',
-            price: '$22',
-            margin: '72%',
-            popularity: '83%',
-            sales: '1800',
-            revenue: '$4,567.8',
-            status: 'Plow Horses'
-        },
-        {
-            id: '21',
-            product: 'Tuna Steak',
-            category: 'Seafood',
-            price: '$110',
-            margin: '90%',
-            popularity: '85%',
-            sales: '380',
-            revenue: '$6,234.5',
-            status: 'Star'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
             id: '22',
-            product: 'Pork Chops',
-            category: 'Meat Dishes',
-            price: '$75',
-            margin: '68%',
-            popularity: '79%',
-            sales: '620',
-            revenue: '$7,890.2',
-            status: 'Puzzles'
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
-            id: '23',
-            product: 'Fruit Smoothie',
-            category: 'Beverages',
-            price: '$25',
-            margin: '75%',
-            popularity: '90%',
-            sales: '1400',
-            revenue: '$5,234.6',
-            status: 'Star'
+            id: '15',
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
-            id: '24',
-            product: 'Cheese Platter',
-            category: 'Appetizers',
-            price: '$65',
-            margin: '85%',
-            popularity: '88%',
-            sales: '480',
-            revenue: '$4,567.9',
-            status: 'Star'
+            id: '16',
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         },
         {
-            id: '25',
-            product: 'Tomato Soup',
-            category: 'Soups',
-            price: '$32',
-            margin: '78%',
-            popularity: '81%',
-            sales: '680',
-            revenue: '$3,456.7',
-            status: 'Plow Horses'
+            id: '17',
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
+        },
+        {
+            id: '18',
+            category: 'Special Occasion Catering',
+            actual: '$38,750',
+            difference: '-$20,000',
+            variance: '+2%',
+            status: 'Over Budget'
         }
     ];
 
@@ -293,13 +184,7 @@ function Pagination() {
         currentPage * rowsPerPage
     );
 
-    // Function to get margin color
-    const getMarginColor = (margin: string) => {
-        const marginValue = parseInt(margin.replace('%', ''));
-        if (marginValue >= 80) return 'text-[#34C759]';
-        if (marginValue >= 60) return 'text-[#E7AA0B]';
-        return 'text-[#E51B1B]';
-    };
+
 
     return (
         <>
@@ -388,22 +273,24 @@ function Pagination() {
                         <thead className="bg-white text-xs text-gray-500 font-normal tracking-wider">
                             <tr>
                                 {/* Column Headers */}
-                                {['Product', 'Category', 'Price', 'Margin', 'Popularity', 'Sales', 'Revenue', 'Status'].map((header) => (
+                                {['Category', 'Actual', 'Difference', '%Variance', 'Status', 'Actions'].map((header) => (
                                     <th key={header} className="px-4 py-4">
                                         <div className="flex justify-between items-center w-full">
                                             <span className='text-xs text-[#727A90] '>{header}</span>
-                                            <svg
-                                                width="18"
-                                                height="18"
-                                                viewBox="0 0 18 18"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M4.81063 6.75H13.1896C13.3379 6.75003 13.4829 6.79404 13.6062 6.87645C13.7295 6.95886 13.8256 7.07598 13.8824 7.21301C13.9391 7.35003 13.954 7.50081 13.9251 7.64627C13.8961 7.79174 13.8247 7.92536 13.7199 8.03025L9.53038 12.2197C9.38974 12.3603 9.199 12.4393 9.00013 12.4393C8.80126 12.4393 8.61053 12.3603 8.46988 12.2197L4.28038 8.03025C4.17552 7.92536 4.10412 7.79174 4.07519 7.64627C4.04627 7.50081 4.06112 7.35003 4.11787 7.21301C4.17463 7.07598 4.27073 6.95886 4.39404 6.87645C4.51734 6.79404 4.66232 6.75003 4.81063 6.75Z"
-                                                    fill="#8E95A6"
-                                                />
-                                            </svg>
+                                            {header !== 'Actions' && (
+                                                <svg
+                                                    width="18"
+                                                    height="18"
+                                                    viewBox="0 0 18 18"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M4.81063 6.75H13.1896C13.3379 6.75003 13.4829 6.79404 13.6062 6.87645C13.7295 6.95886 13.8256 7.07598 13.8824 7.21301C13.9391 7.35003 13.954 7.50081 13.9251 7.64627C13.8961 7.79174 13.8247 7.92536 13.7199 8.03025L9.53038 12.2197C9.38974 12.3603 9.199 12.4393 9.00013 12.4393C8.80126 12.4393 8.61053 12.3603 8.46988 12.2197L4.28038 8.03025C4.17552 7.92536 4.10412 7.79174 4.07519 7.64627C4.04627 7.50081 4.06112 7.35003 4.11787 7.21301C4.17463 7.07598 4.27073 6.95886 4.39404 6.87645C4.51734 6.79404 4.66232 6.75003 4.81063 6.75Z"
+                                                        fill="#8E95A6"
+                                                    />
+                                                </svg>
+                                            )}
                                         </div>
                                     </th>
                                 ))}
@@ -418,22 +305,21 @@ function Pagination() {
                                     className={`border-t border-gray-100 ${i % 2 === 1 ? 'bg-[#f8f8fc]' : 'bg-white'
                                         }`}
                                 >
-                                    <td className="px-4 py-4">{item.product}</td>
                                     <td className="px-4 py-4">{item.category}</td>
-                                    <td className="px-4 py-4">{item.price}</td>
-                                    <td className={`px-4 py-4 ${getMarginColor(item.margin)}`}>{item.margin}</td>
-                                    <td className="px-4 py-4">{item.popularity}</td>
-                                    <td className="px-4 py-4">{item.sales}</td>
-                                    <td className="px-4 py-4">{item.revenue}</td>
-                                    <td className="px-4 py-4">
-                                        <StatusPills status={item.status} />
+                                    <td className="px-4 py-4">{item.actual}</td>
+                                    <td className={`px-4 py-4 ${item.difference.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                                        {item.difference}
                                     </td>
-
-                                    {/* Action buttons centered vertically */}
+                                    <td className={`px-4 py-4 ${item.status === 'Under Budget' ? 'text-green-600' : 'text-red-600'}`}>
+                                        {item.variance}
+                                    </td>
+                                    <td className="px-4 py-4">
+                                        <BudgetStatusPills status={item.status} />
+                                    </td>
                                     <td className="px-4 py-2">
-                                        <div className="flex items-center justify-end gap-4">
+                                        <div className="flex items-center justify-start">
                                             {/* Pencil Icon */}
-                                            <button className="hover:opacity-80 flex items-center justify-center">
+                                            <button className="hover:opacity-80 flex items-center justify-center ml-3">
                                                 <svg
                                                     width="20"
                                                     height="20"
@@ -456,22 +342,6 @@ function Pagination() {
                                                             <rect width="18" height="18" fill="white" transform="translate(3 3)" />
                                                         </clipPath>
                                                     </defs>
-                                                </svg>
-                                            </button>
-
-                                            {/* Delete Icon */}
-                                            <button className="hover:opacity-80 flex items-center justify-center">
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M18.75 5.99999H16.425C16.0662 4.25518 14.5313 3.00225 12.75 3H11.25C9.46863 3.00225 7.93378 4.25518 7.57498 5.99999H5.24999C4.83578 5.99999 4.5 6.33577 4.5 6.74998C4.5 7.16419 4.83578 7.5 5.24999 7.5H5.99998V17.25C6.00247 19.32 7.67995 20.9975 9.74999 21H14.25C16.32 20.9975 17.9975 19.32 18 17.25V7.5H18.75C19.1642 7.5 19.5 7.16422 19.5 6.75001C19.5 6.3358 19.1642 5.99999 18.75 5.99999ZM11.25 15.75C11.25 16.1642 10.9142 16.5 10.5 16.5C10.0858 16.5 9.74999 16.1642 9.74999 15.75V11.25C9.74999 10.8358 10.0858 10.5 10.5 10.5C10.9142 10.5 11.25 10.8358 11.25 11.25V15.75H11.25ZM14.25 15.75C14.25 16.1642 13.9142 16.5 13.5 16.5C13.0858 16.5 12.75 16.1642 12.75 15.75V11.25C12.75 10.8358 13.0858 10.5 13.5 10.5C13.9142 10.5 14.25 10.8358 14.25 11.25V15.75ZM9.12825 5.99999C9.44726 5.10171 10.2968 4.50114 11.25 4.49998H12.75C13.7032 4.50114 14.5528 5.10171 14.8718 5.99999H9.12825Z"
-                                                        fill="#727A90"
-                                                    />
                                                 </svg>
                                             </button>
                                         </div>
