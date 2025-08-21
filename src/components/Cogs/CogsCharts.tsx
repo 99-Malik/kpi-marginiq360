@@ -12,7 +12,6 @@ import {
     PieChart,
     Pie,
     Cell,
-    Rectangle,
 } from 'recharts';
 
 /* ---------- COLORS ---------- */
@@ -141,11 +140,11 @@ export default function TopRow() {
                                             barCategoryGap={28}
                                             barSize={8}
                                             margin={{ top: 12, right: 24, bottom: 8, left: 56 }}
-                                            onMouseMove={(nextState: any) => {
-                                                if (nextState && typeof nextState.activeTooltipIndex === 'number') {
-                                                    setActiveIdx(nextState.activeTooltipIndex);
-                                                }
-                                            }}
+                                                                                onMouseMove={(nextState) => {
+                                        if (nextState && typeof nextState.activeTooltipIndex === 'number') {
+                                            setActiveIdx(nextState.activeTooltipIndex);
+                                        }
+                                    }}
                                             onMouseLeave={() => setActiveIdx(null)}
                                         >
                                             <CartesianGrid horizontal={false} strokeDasharray="3 6" stroke={COLORS.grid} />

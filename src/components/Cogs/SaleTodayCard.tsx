@@ -1,16 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import {
-    ResponsiveContainer,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    LabelList,
-    Rectangle, // NEW
-} from 'recharts';
 
 type Item = { key: string; label: string; value: number; color: string; up: boolean };
 
@@ -51,7 +41,7 @@ export default function SaleTodayCard() {
                 {/* Three separate chart segments with gaps */}
                 <div className="h-auto md:h-40 flex items-center">
                     <div className="w-full flex gap-1">
-                        {SALE_TODAY.map((item, index) => {
+                        {SALE_TODAY.map((item) => {
                             const percentage = Math.round((item.value / total) * 100);
 
                             return (
