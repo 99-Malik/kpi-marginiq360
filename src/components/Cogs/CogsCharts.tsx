@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
     ResponsiveContainer,
     BarChart,
@@ -12,7 +12,6 @@ import {
     PieChart,
     Pie,
     Cell,
-    Rectangle,
 } from 'recharts';
 
 /* ---------- COLORS ---------- */
@@ -42,6 +41,11 @@ const DONUT = [
     { name: 'Recipies', value: 25, color: COLORS.violet },
     { name: 'Label', value: 15, color: COLORS.amber },
 ];
+
+/* ---------- TYPES ---------- */
+interface MouseMoveEvent {
+    activeTooltipIndex?: number | string | null;
+}
 
 /* ---------- SHARED UI ---------- */
 function Card({
@@ -115,7 +119,7 @@ export default function TopRow() {
                                     barCategoryGap={28}  // increase gap between bars
                                     barSize={8}         // reduce bar thickness                        // reduced from 16 to 12 for thicker bars
                                     margin={{ top: 12, right: 24, bottom: 8, left: 56 }} // added 8px bottom margin instead of 0
-                                    onMouseMove={(s: { activeTooltipIndex?: number }) => setActiveIdx(s?.activeTooltipIndex ?? null)}
+                                    onMouseMove={(s: MouseMoveEvent) => setActiveIdx(typeof s?.activeTooltipIndex === 'number' ? s.activeTooltipIndex : null)}
                                     onMouseLeave={() => setActiveIdx(null)}
                                 >
                                     <CartesianGrid horizontal={false} strokeDasharray="3 6" stroke={COLORS.grid} />

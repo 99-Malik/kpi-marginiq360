@@ -11,7 +11,7 @@ import {
   Tooltip,
   ReferenceLine,
   ReferenceDot,
-  type TooltipProps,
+
 } from 'recharts';
 
 type Datum = { m: string; income: number; profit: number; expense: number };
@@ -36,7 +36,16 @@ const yTicks = [0, 200, 400, 600, 800, 1000, 1200];
 const money = (v: number) => (v === 0 ? '0' : v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${v}`);
 
 /** Typed tooltip (no any) */
-function TooltipCard({ active, payload }: TooltipProps<number, string>) {
+interface TooltipCardProps {
+  active?: boolean;
+  payload?: Array<{
+    dataKey?: string;
+    value?: number;
+    color?: string;
+  }>;
+}
+
+function TooltipCard({ active, payload }: TooltipCardProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   const getVal = (k: SeriesKey): number => {
@@ -68,6 +77,7 @@ function TooltipCard({ active, payload }: TooltipProps<number, string>) {
 /** Minimal prop shapes to type custom tick & mouse state */
 type TickRendererProps = { x: number; y: number; payload: { value: string | number } };
 type MouseMoveState = { isTooltipActive?: boolean; activeLabel?: string | number };
+
 
 export default function RevenuePerformanceChart() {
   // track hovered month for the orange guide + x-axis highlight
