@@ -194,7 +194,7 @@ export default function TrendsTab() {
 
                         {/* vertical dashed line + dot at Jun */}
                         <ReferenceLine x={refLabel} stroke={PURPLE} strokeDasharray="4 6" />
-                        <ReferenceDot x={refLabel} y={refVal} r={4} fill={PURPLE} stroke="#fff" isFront />
+                        <ReferenceDot x={refLabel} y={refVal} r={4} fill={PURPLE} stroke="#fff" />
 
                         <Tooltip content={<CustomTooltip />} cursor={{ stroke: GRID, strokeDasharray: '3 6' }} />
                     </ComposedChart>
