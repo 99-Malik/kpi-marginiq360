@@ -64,9 +64,9 @@ const icons: NavIcon[] = [
   { type: 'svg', Icon: StarIcon, alt: 'Star', width: 26, height: 26, path: '/performance-dashboard' },
   { type: 'svg', Icon: BillIcon, alt: 'Bill', width: 26, height: 26, path: '/prep-sheets' },
   { type: 'svg', Icon: TrashIcon, alt: 'Trash', width: 26, height: 26, path: '/trash' },
-
+  { type: 'svg', Icon: BagIcon, alt: 'Bag', width: 26, height: 26, path: '/manage-products' },
   { type: 'svg', Icon: CalculatorIcon, alt: 'Calculator', width: 26, height: 26, path: '/calculator' },
-  { type: 'svg', Icon: BagIcon, alt: 'Bag', width: 26, height: 26, path: '/bag' },
+
   { type: 'svg', Icon: CartIcon, alt: 'Cart', width: 26, height: 26, path: '/purchases' },
 
   { type: 'svg', Icon: PersonIcon, alt: 'Person', width: 26, height: 26, path: '/person' },
