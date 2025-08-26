@@ -70,7 +70,7 @@ const icons: NavIcon[] = [
   { type: 'svg', Icon: CartIcon, alt: 'Cart', width: 26, height: 26, path: '/purchases' },
 
   { type: 'svg', Icon: PersonIcon, alt: 'Person', width: 26, height: 26, path: '/person' },
-  { type: 'svg', Icon: FolderIcon, alt: 'Folder', width: 26, height: 26, path: '/folder' },
+  { type: 'svg', Icon: FolderIcon, alt: 'Folder', width: 26, height: 26, path: '/invoice-upload' },
   { type: 'svg', Icon: SettingsIcon, alt: 'Settings', width: 26, height: 26, path: '/settings' },
 ];
 
