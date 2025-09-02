@@ -65,10 +65,8 @@ const icons: NavIcon[] = [
   { type: 'svg', Icon: BillIcon, alt: 'Bill', width: 26, height: 26, path: '/prep-sheets' },
   { type: 'svg', Icon: TrashIcon, alt: 'Trash', width: 26, height: 26, path: '/waste-tracking' },
   { type: 'svg', Icon: BagIcon, alt: 'Bag', width: 26, height: 26, path: '/manage-products' },
-  { type: 'svg', Icon: CalculatorIcon, alt: 'Calculator', width: 26, height: 26, path: '/calculator' },
-
-  { type: 'svg', Icon: CartIcon, alt: 'Cart', width: 26, height: 26, path: '/purchases' },
-
+  // { type: 'svg', Icon: CalculatorIcon, alt: 'Calculator', width: 26, height: 26, path: '/calculator' },
+  { type: 'svg', Icon: CartIcon, alt: 'Cart', width: 26, height: 26, path: '/purchasing' },
   { type: 'svg', Icon: PersonIcon, alt: 'Person', width: 26, height: 26, path: '/vendor-directory' },
   { type: 'svg', Icon: FolderIcon, alt: 'Folder', width: 26, height: 26, path: '/invoice-upload' },
   { type: 'svg', Icon: SettingsIcon, alt: 'Settings', width: 26, height: 26, path: '/settings' },

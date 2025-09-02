@@ -11,6 +11,7 @@ interface ChartCardProps {
   chartWidth?: number;
   chartHeight?: number;
   showChart?: boolean;
+  cardHeight?: string; // Optional: Control card height with Tailwind classes or custom values
 }
 
 const colorMap = {
@@ -62,6 +63,7 @@ export default function ChartCard({
   chartWidth = 120,
   chartHeight = 60,
   showChart = false,
+  cardHeight, // Optional height control
 }: ChartCardProps) {
   const valuesOnly = chartData ? chartData.map((item) => item.value) : [];
   const { text, bg, stroke, fillFrom, cardTo } = colorMap[color] || colorMap.green;
@@ -72,7 +74,7 @@ export default function ChartCard({
   const isHoursTitle = title === "Total Time" || title === "Total Hours";
   return (
     <div
-      className="flex flex-col rounded-2xl bg-gradient-to-br p-4 h-auto shadow-sm w-full max-w-md"
+      className={`flex flex-col rounded-2xl bg-gradient-to-br p-4 ${cardHeight || 'h-auto'} shadow-sm w-full max-w-md`}
       style={{
         backgroundImage: `radial-gradient(circle at bottom right, ${cardTo}, white 70%)`,
       }}
@@ -92,7 +94,7 @@ export default function ChartCard({
       <div className="flex items-start justify-between mt-3">
         <div className={`text-2xl font-semibold flex-shrink-0 flex items-center gap-0 ${title === "Total Waste Cost" ? "text-[#E51B1B]" : "text-gray-900"}`}>
           {/* Dollar sign for Total Revenue and Gross Profit */}
-          {(title === "Total Revenue" || title === "Gross Profit" || title === "Total Budget" || title === "Budget Accuracy" || title === "Variance" || title === "Total Waste Cost" || title === "Waste Events" || title === "Avg Cost/Event" ) && (
+          {(title === "Total Revenue" || title === "Gross Profit" || title === "Total Budget" || title === "Budget Accuracy" || title === "Variance" || title === "Total Waste Cost" || title === "Waste Events" || title === "Avg Cost/Event" || title === "This Week's Orders" ) && (
             <svg
               width="24"
               height="24"
@@ -112,6 +114,83 @@ export default function ChartCard({
 
           {isHoursTitle && (
             <span className="text-2xl font-semibold text-gray-900 ml-1">hrs</span>
+          )}
+
+          {/* For This Week's Orders, show change arrow and amount right after value */}
+          {title === "This Week's Orders" && (
+            <div
+              className="text-sm font-medium flex items-center gap-1 ml-2"
+            >
+                             <span className="text-xs" style={{ color: "#009499" }}>
+                 {hasChange ? `${change}%` : "--%"}
+               </span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden
+              >
+                <path
+                  d="M4.27325 10.6667H11.7266C11.8584 10.6661 11.9872 10.6265 12.0965 10.5528C12.2058 10.4791 12.2908 10.3746 12.3408 10.2526C12.3907 10.1306 12.4034 9.99648 12.3771 9.86727C12.3508 9.73806 12.2869 9.61954 12.1932 9.52669L8.47325 5.8067C8.41127 5.74421 8.33754 5.69461 8.2563 5.66077C8.17506 5.62692 8.08792 5.6095 7.99991 5.6095C7.91191 5.6095 7.82477 5.62692 7.74353 5.66077C7.66229 5.69461 7.58856 5.74421 7.52658 5.8067L3.80658 9.52669C3.71297 9.61954 3.64898 9.73806 3.62273 9.86727C3.59647 9.99648 3.60912 10.1306 3.65907 10.2526C3.70902 10.3746 3.79403 10.4791 3.90335 10.5528C4.01267 10.6265 4.1414 10.6661 4.27325 10.6667Z"
+                  fill="#009499"
+                />
+              </svg>
+                             <span className="text-gray-500 font-normal text-sm ml-1">
+                 {hasAmount ? `+$${amount}` : "+$--"}
+               </span>
+            </div>
+          )}
+
+          {/* For Avg Order Values, show change value with % or --%, then dynamic amount */}
+          {title === "Avg Order Values" && (
+            <div
+              className="text-sm font-medium flex items-center gap-1 ml-2"
+            >
+              <span className="text-xs" style={{ color: "#E44FBA" }}>
+                {hasChange ? `${change}%` : "--%"}
+              </span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden
+              >
+                <path
+                  d="M4.27325 10.6667H11.7266C11.8584 10.6661 11.9872 10.6265 12.0965 10.5528C12.2058 10.4791 12.2908 10.3746 12.3408 10.2526C12.3907 10.1306 12.4034 9.99648 12.3771 9.86727C12.3508 9.73806 12.2869 9.61954 12.1932 9.52669L8.47325 5.8067C8.41127 5.74421 8.33754 5.69461 8.2563 5.66077C8.17506 5.62692 8.08792 5.6095 7.99991 5.6095C7.91191 5.6095 7.82477 5.62692 7.74353 5.66077C7.66229 5.69461 7.58856 5.74421 7.52658 5.8067L3.80658 9.52669C3.71297 9.61954 3.64898 9.73806 3.62273 9.86727C3.59647 9.99648 3.60912 10.1306 3.65907 10.2526C3.70902 10.3746 3.79403 10.4791 3.90335 10.5528C4.01267 10.6265 4.1414 10.6661 4.27325 10.6667Z"
+                  fill="#E44FBA"
+                />
+              </svg>
+              <span className="text-xs text-gray-500">
+                {hasAmount ? amount : "--"}
+              </span>
+            </div>
+          )}
+
+          {/* For Active Orders, show change in same row as value */}
+          {title === "Active Orders" && hasChange && (
+            <div
+              className="text-sm font-medium flex items-center gap-1 ml-2"
+              style={{ color: text }}
+            >
+              <span className="text-xs">{change}</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden
+              >
+                <path
+                  d="M4.27325 10.6667H11.7266C11.8584 10.6661 11.9872 10.6265 12.0965 10.5528C12.2058 10.4791 12.2908 10.3746 12.3408 10.2526C12.3907 10.1306 12.4034 9.99648 12.3771 9.86727C12.3508 9.73806 12.2869 9.61954 12.1932 9.52669L8.47325 5.8067C8.41127 5.74421 8.33754 5.69461 8.2563 5.66077C8.17506 5.62692 8.08792 5.6095 7.99991 5.6095C7.91191 5.6095 7.82477 5.62692 7.74353 5.66077C7.66229 5.69461 7.58856 5.74421 7.52658 5.8067L3.80658 9.52669C3.71297 9.61954 3.64898 9.73806 3.62273 9.86727C3.59647 9.99648 3.60912 10.1306 3.65907 10.2526C3.70902 10.3746 3.79403 10.4791 3.90335 10.5528C4.01267 10.6265 4.1414 10.6661 4.27325 10.6667Z"
+                  fill={text}
+                />
+              </svg>
+            </div>
           )}
         </div>
 
@@ -135,8 +214,8 @@ export default function ChartCard({
           className="text-sm font-medium flex items-center gap-1 mt-1"
           style={{ color: text }}
         >
-          {/* show change + arrow only if change is provided */}
-          {hasChange && (
+          {/* show change + arrow only if change is provided and not Active Orders and not Issues and not This Week's Orders and not Avg Order Values */}
+          {hasChange && title !== "Active Orders" && title !== "Issues" && title !== "This Week's Orders" && title !== "Avg Order Values" && (
             <>
               <span className="text-xs">{change}</span>
               <svg
@@ -155,10 +234,12 @@ export default function ChartCard({
             </>
           )}
 
-          {/* amount (or placeholder) always rendered */}
-          {hasAmount ? (
-            <span className="text-gray-500 font-normal">{amount}</span>
-          ) : (
+                     {/* amount rendered only if it has content and not This Week's Orders and not Avg Order Values */}
+           {hasAmount && title !== "This Week's Orders" && title !== "Avg Order Values" && (
+             <span className="text-gray-500 font-normal">{amount}</span>
+           )}
+          {/* placeholder rendered only if amount is undefined/null (not empty string) and not Issues */}
+          {amount === undefined && title !== "Issues" && (
             <svg
               width="12"
               height="2"
