@@ -1,15 +1,12 @@
 'use client';
 import React, { useState } from 'react'
-import NavBar from '../../components/NavBar/NavBar';
-import SideBarMenu from '../../components/Sidebar/SideBarMenu';
-import MenuBar from '../../components/MenuBar/MenuBar'
 import ChartCard from '../../components/LineChartCard/ChartCards';
 import Pagination from '@/components/MenuEngineering/Pagination/Pagination';
 import StatusPills from '../../components/StatusPills/StatusPills';
 
 function MenuEngineering() {
     const [menuOpen, setMenuOpen] = useState(false);
-
+    const [selectedRows, setSelectedRows] = useState<string[]>([]);
     const [activeMainTab, setActiveMainTab] = useState('profitability-matrix');
     const [activeSubTab, setActiveSubTab] = useState('menu-items');
 
@@ -169,27 +166,9 @@ function MenuEngineering() {
 
     ];
     return (
-        <div className="min-h-screen w-full flex flex-col">
-            {/* NavBar */}
-            <NavBar onLogoClick={handleLogoClick} />
+       <>
 
-            {/* Main Content with Sidebar */}
-            <div className="flex flex-1 w-full">
-                <SideBarMenu />
-
-                {menuOpen && (
-                    <>
-                        <div
-                            className="fixed inset-0 z-[55] bg-black/10"
-                            onClick={() => setMenuOpen(false)}
-                        />
-                        <div className="fixed inset-y-0 left-16 z-[60]">
-                            <MenuBar onClose={() => setMenuOpen(false)} />
-                        </div>
-                    </>
-                )}
-
-                <main className="flex-1 overflow-auto p-6 pt-4 bg-white border-l border-gray-200">
+                <main className="flex-1 overflow-auto px-2 pb-6 bg-white">
                     <div className="min-w-0 flex-1">
                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                             Menu Engineering                        </h1>
@@ -775,8 +754,7 @@ function MenuEngineering() {
                         )}
                     </div>
                 </main>
-            </div>
-        </div>
+                </>
     );
 }
 

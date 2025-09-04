@@ -380,7 +380,7 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({ onSendMessage }) => {
 }
 `}</style>
 
-      <div className="flex items-center ">
+      <div className="flex items-center   ">
         <div className="relative w-full px-10 ">
           {/* Main Chat Container */}
           <div className="bg-[#F8F8FC] rounded-3xl px-6 relative">

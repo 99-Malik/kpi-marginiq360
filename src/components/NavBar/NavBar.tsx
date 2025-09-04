@@ -94,7 +94,7 @@ const NavBar: React.FC<NavBarProps> = ({ onLogoClick = () => { } }) => {
                         className="bg-white h-[72px] rounded-tl-3xl border-t border-l border-gray-200"
                     >
                         {/* Content container */}
-                        <div className="h-full mx-auto max-w-[1400px] px-3 sm:px-4 lg:px-6 flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div className="h-full mx-auto max-w-[1400px] md:px-6 xl:px-4 2xl:px-0 flex items-center gap-2 sm:gap-3 lg:gap-4">
                             {/* Search */}
                             <div className="relative w-1/3">
                                 {/* Search Icon */}
@@ -121,11 +121,11 @@ const NavBar: React.FC<NavBarProps> = ({ onLogoClick = () => { } }) => {
                                 </div>
 
                                 {/* Input field */}
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    className="w-full h-9 lg:h-10 pl-7 sm:pl-9 pr-3 rounded-lg border border-[#E9EAEA] bg-white text-sm text-gray-700 outline-none focus:ring-1 focus:ring-[#E9EAEA]"
-                                />
+                                                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="w-full h-9 lg:h-10 pl-10 pr-3 rounded-lg border border-[#E9EAEA] bg-white text-sm text-gray-700 outline-none focus:ring-1 focus:ring-[#E9EAEA]"
+                                    />
                             </div>
 
                             {/* Weather (md+) */}

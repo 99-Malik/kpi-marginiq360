@@ -25,6 +25,8 @@ import {
 
 interface SideBarMenuProps {
   onLogoClick?: () => void;
+  onHover?: () => void;
+  onHoverLeave?: () => void;
 }
 
 type PngIcon = {
@@ -74,7 +76,7 @@ const icons: NavIcon[] = [
 
 const BTN_SIZE = 40; // Outer button size
 
-const SideBarMenu: React.FC<SideBarMenuProps> = () => {
+const SideBarMenu: React.FC<SideBarMenuProps> = ({ onHover, onHoverLeave }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [activeIndex, setActiveIndex] = useState<number>(2);
@@ -105,9 +107,10 @@ const SideBarMenu: React.FC<SideBarMenuProps> = () => {
   return (
     <div
       className={`w-16 shrink-0 bg-[#F8F8FC] flex flex-col items-center
-      h-content min-h-0
-      ${pathname === '/ai-suggestions' ? 'overflow-y-auto scroll-hidden' : 'overflow-hidden'}
+      ${pathname === '/ai-suggestions' ? 'h-content overflow-y-auto scroll-hidden' : 'h-content min-h-0 overflow-hidden'}
     `}
+      onMouseEnter={onHover}
+      onMouseLeave={onHoverLeave}
     >
       <div className="flex flex-col items-center space-y-4 flex-1 py-4">
         {icons.map((item, idx) => {

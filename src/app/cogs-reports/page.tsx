@@ -1,8 +1,5 @@
 'use client'
 import React, { useState } from 'react'
-import NavBar from '../../components/NavBar/NavBar';
-import SideBarMenu from '../../components/Sidebar/SideBarMenu';
-import MenuBar from '../../components/MenuBar/MenuBar';
 import CogsCharts from '@/components/Cogs/CogsCharts';
 import RevenuePerformanceChart from '@/components/LineChartCard/RevenuePerformanceChart';
 import SaleTodayCard from '@/components/Cogs/SaleTodayCard';
@@ -14,27 +11,9 @@ function Page() {
         setMenuOpen(!menuOpen);
     };
     return (
-        <div className="min-h-screen w-full flex flex-col">
-            {/* NavBar */}
-            <NavBar onLogoClick={handleLogoClick} />
+    <>
 
-            {/* Main Content with Sidebar */}
-            <div className="flex flex-1 w-full">
-                <SideBarMenu />
-
-                {menuOpen && (
-                    <>
-                        <div
-                            className="fixed inset-0 z-[55] bg-black/10"
-                            onClick={() => setMenuOpen(false)}
-                        />
-                        <div className="fixed inset-y-0 left-16 z-[60]">
-                            <MenuBar onClose={() => setMenuOpen(false)} />
-                        </div>
-                    </>
-                )}
-
-                <main className="flex-1 overflow-auto p-6 pt-4 bg-white border-l border-gray-200">
+                <main className="flex-1 overflow-auto px-2 pb-6 bg-white ">
                     {/* Header */}
                     <div className="mb-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
@@ -197,9 +176,9 @@ function Page() {
                         </div>
 
 
+
                 </main>
-            </div>
-        </div>
+                </>
     )
 }
 

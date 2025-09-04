@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import NavBar from '../../components/NavBar/NavBar';
-import SideBarMenu from '../../components/Sidebar/SideBarMenu';
-import MenuBar from '../../components/MenuBar/MenuBar';
+
 import ChatInputBar from '../../components/ChatInputBar/chatInputBar';
 import AiSuggestionSvg from '../../components/SVGIcons/AiSuggestionSvg/AiSuggestionSvg';
 import Image from "next/image";
@@ -23,16 +21,23 @@ function Page() {
     const [showSuggestions, setShowSuggestions] = useState(true);
 
 
-    // auto-scroll to bottom
+    // auto-scroll to bottom - only when messages change, not when suggestions change
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+    
     useEffect(() => {
-        const id = requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        });
-        return () => cancelAnimationFrame(id);
-    }, [messages, activeTab, showSuggestions]);
+        if (messages.length > 0 && !showSuggestions && messagesContainerRef.current) {
+            const id = requestAnimationFrame(() => {
+                // Scroll to bottom of messages container
+                messagesContainerRef.current?.scrollTo({
+                    top: messagesContainerRef.current.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+            return () => cancelAnimationFrame(id);
+        }
+    }, [messages.length, showSuggestions]);
 
-    const handleLogoClick = () => setMenuOpen((v) => !v);
 
     const handleTabClick = (tabId: string) => {
         setActiveTab(tabId);
@@ -105,47 +110,12 @@ function Page() {
     const handleSuggestionClick = (suggestion: string) => handleSendMessage(suggestion);
 
     return (
-        <div
-            className={
-                activeTab === 'ai-assistant'
-                    ? 'h-screen w-full flex flex-col overflow-hidden'
-                    : 'h-screen w-full flex flex-col'
-            }
-        >
-            {/* Top bar */}
-            <NavBar onLogoClick={handleLogoClick} />
-
+        <div className="h-screen w-full flex flex-col overflow-hidden ">
             {/* Row: sidebar + content */}
-            <div
-                className={
-                    activeTab === 'ai-assistant'
-                        ? 'flex flex-1 min-h-0 w-full overflow-hidden'
-                        : 'flex flex-1 w-full'
-                }
-            >
-                <SideBarMenu />
-
-                {menuOpen && (
-                    <>
-                        <div
-                            className="fixed inset-0 z-[55] bg-black/10"
-                            onClick={() => setMenuOpen(false)}
-                        />
-                        <div className="fixed inset-y-0 left-16 z-[60]">
-                            <MenuBar onClose={() => setMenuOpen(false)} />
-                        </div>
-                    </>
-                )}
-
-                <main
-                    className={
-                        activeTab === 'ai-assistant'
-                            ? 'flex-1 bg-white border-l border-gray-200 flex flex-col min-h-0 overflow-hidden'
-                            : 'flex-1 overflow-auto  bg-white border-l border-gray-200'
-                    }
-                >
+            <div className="flex flex-1 min-h-0 w-full overflow-hidden">
+                <main className="flex-1 bg-white flex flex-col min-h-0 overflow-hidden">
                     {/* Header + tabs (non-scrolling) */}
-                    <div className="p-6 pb-4 shrink-0">
+                    <div className=" pb-4 shrink-0">
                         <div className="flex justify-between items-start mb-6">
                             <div className="min-w-0 flex-1">
                                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">AI Automation</h1>
@@ -186,7 +156,7 @@ function Page() {
                                 // --- Suggestions screen ---
                                 <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
                                     {/* Scrollable content: SVG + Heading + Suggestions */}
-                                    <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-28 custom-scroll">
+                                    <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4 custom-scroll">
                                         <div className="max-w-xl mx-auto text-center">
                                             {/* SVG */}
                                             <div className="relative mx-auto w-60 h-60 grid items-center justify-start ">
@@ -264,7 +234,10 @@ function Page() {
 
                             ) : (
                                 // Messages list (scrollable)
-                                <div className="flex-1 min-h-0 overflow-y-auto px-10 py-4 space-y-4 custom-scroll">
+                                <div 
+                                    ref={messagesContainerRef}
+                                    className="flex-1 min-h-0 overflow-y-auto px-10 py-4 pb-20 space-y-4 custom-scroll"
+                                >
                                     {messages.map((message) => (
                                         <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             <div
@@ -443,12 +416,6 @@ function Page() {
                         </div>
                     )}
 
-                    {/* Input (sticky at bottom) */}
-                    {activeTab === 'ai-assistant' && (
-                        <div className="sticky bottom-0 bg-white flex-shrink-0 mb-4">
-                            <ChatInputBar onSendMessage={handleSendMessage} />
-                        </div>
-                    )}
 
                     {activeTab === 'recommendations' && (
                         // <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
@@ -621,9 +588,14 @@ function Page() {
                         <AiSuggestionTab activeTab={activeTab}/>
                       )}
                 </main>
-
-
             </div>
+
+            {/* Input (fixed at bottom of page) */}
+            {activeTab === 'ai-assistant' && (
+                <div className="fixed bottom-0 left-16 right-0 bg-white border-t border-l border-gray-200 p-4 z-10">
+                    <ChatInputBar onSendMessage={handleSendMessage} />
+                </div>
+            )}
         </div>
     );
 }

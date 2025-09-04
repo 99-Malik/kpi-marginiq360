@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import NavBar from '../../components/NavBar/NavBar';
-import SideBarMenu from '../../components/Sidebar/SideBarMenu';
-import MenuBar from '../../components/MenuBar/MenuBar';
 import NewRecipieModal from '../../components/Modal/RecipeManagement/NewRecipieModal';
 import RecipeModal from '@/components/Modal/RecipeManagement/SelectionModals/RecipeModal';
 import DealsModal from '@/components/Modal/RecipeManagement/SelectionModals/DealsModal';
@@ -254,22 +251,8 @@ function Page() {
     };
 
     return (
-        <div className="min-h-screen w-full flex flex-col">
-            <NavBar onLogoClick={handleLogoClick} />
-
-            <div className="flex flex-1 w-full">
-                <SideBarMenu />
-
-                {menuOpen && (
-                    <>
-                        <div className="fixed inset-0 z-[55] bg-black/10" onClick={() => setMenuOpen(false)} />
-                        <div className="fixed inset-y-0 left-16 z-[60]">
-                            <MenuBar onClose={() => setMenuOpen(false)} />
-                        </div>
-                    </>
-                )}
-
-                <main className="flex-1 p-3 sm:p-6 pt-4 bg-gray-50 border-l border-gray-200 overflow-x-hidden">
+       <>
+                <main className="flex-1  px-2 pb-6 bg-white overflow-x-hidden">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 max-w-full">
                         <div className="min-w-0 flex-1">
                             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
@@ -401,7 +384,7 @@ function Page() {
                         </div>
                     </section>
                     {/* Body */}
-                    <section className="flex flex-col lg:flex-row gap-4 lg:gap-5 w-full max-w-full overflow-x-hidden">
+                    <section className="flex flex-col pb-4 lg:flex-row gap-4 lg:gap-5 w-full max-w-full overflow-x-hidden">
                         {/* Left: Recipe list */}
                         <div className="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-xl border border-gray-100 shadow-sm pl-4 py-4 max-h-[600px] lg:max-h-[900px] flex flex-col overflow-y-auto min-w-0">
                             <div className="flex items-center justify-between mb-3 pr-4 shrink-0">
@@ -1166,8 +1149,7 @@ function Page() {
                         </div>
                     </section>
                 </main>
-            </div>
-        </div>
+                </>
     );
 }
 

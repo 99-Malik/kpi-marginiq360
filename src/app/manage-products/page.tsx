@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useState } from 'react'
-import NavBar from '../../components/NavBar/NavBar';
-import SideBarMenu from '../../components/Sidebar/SideBarMenu';
-import MenuBar from '../../components/MenuBar/MenuBar';
 import Pagination from '@/components/Pagination/ManageProducts/page';
 import DataFetchingModal from '@/components/Modal/ManageProducts/DataFetching/DataFetchingModal';
 import DataPreviewModal from '@/components/Modal/ManageProducts/DataPreview/DataPreviewModal';
@@ -54,27 +51,9 @@ function Page() {
     };
 
     return (
-        <div className="min-h-screen w-full flex flex-col">
-            {/* NavBar */}
-            <NavBar onLogoClick={handleLogoClick} />
+      <>
 
-            {/* Main Content with Sidebar */}
-            <div className="flex flex-1 w-full">
-                <SideBarMenu />
-
-                {menuOpen && (
-                    <>
-                        <div
-                            className="fixed inset-0 z-[55] bg-black/10"
-                            onClick={() => setMenuOpen(false)}
-                        />
-                        <div className="fixed inset-y-0 left-16 z-[60]">
-                            <MenuBar onClose={() => setMenuOpen(false)} />
-                        </div>
-                    </>
-                )}
-
-                <main className="flex-1 overflow-auto p-6 pt-4 bg-white border-l border-gray-200">
+                <main className="flex-1 overflow-auto px-2 pb-6 bg-white">
                     {/* Header */}
                     <div className="mb-6">
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
@@ -141,7 +120,7 @@ function Page() {
                     </div>
 
                 </main>
-            </div>
+            
             <DataFetchingModal isOpen={isDataFetchingOpen} onClose={handleCloseModal} />
             <DataPreviewModal
                 isOpen={isDataPreviewOpen}
@@ -153,7 +132,7 @@ function Page() {
                 isOpen={isProductUpdatedOpen}
                 onClose={() => setIsProductUpdatedOpen(false)}
             />
-        </div>
+            </>
     )
 }
 

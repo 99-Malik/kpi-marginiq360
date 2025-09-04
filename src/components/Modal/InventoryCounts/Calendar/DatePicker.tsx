@@ -34,7 +34,7 @@ export function DatePicker() {
             <DialogTrigger asChild>
                 <Button
                     variant="light"
-                    className="w-full h-11 px-3 mb-4 flex items-center text-xs justify-between rounded-[14px] border border-gray-300 bg-white text-gray-600 font-normal"
+                    className="w-full h-10 px-3 mb-4 flex items-center text-xs justify-between rounded-lg border border-gray-300 bg-white text-gray-600 font-normal"
                 >
                     {date ? (
                         <span>{formatter.format(date.toDate("UTC"))}</span>
